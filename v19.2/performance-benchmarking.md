@@ -15,15 +15,54 @@ We’ve tested CockroachDB extensively in public and private clouds observing co
 
 ## Scale
 
+###TPC-C
+Cockroach Labs measures performance through many diverse tests, including the industry-standard OLTP benchmark TPC-C, which simulates an e-commerce or retail company.
+
+TPC-C is old, but it has withstood the test of time. Despite being created in 1992, it’s still the most mature and relevant industry standard measure for OLTP workloads. In its own words, TPC-C:
+
+      “…involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.”
+
+As a result, TPC-C includes create, read, update, and delete (e.g., CRUD) queries, basic joins, and other SQL statements used to administer mission-critical transactional workloads. It includes detailed specifications for concurrency and workload contention. TPC-C is the only objective comparison for evaluating OLTP performance.
+
+TPC-C measures the throughput and latency for processing sales through a customer warehouse using a “business throughput” metric called tpmC that measures the number of order transactions performed per minute throughout the system.
+
+In fact, tpmC is a considerably more realistic metric than TPS or QPS alone because it summarizes multiple transactions per order and accounts for failed transactions. TPC-C also has several latency requirements that apply to median, p90, and max latencies.
+
+Finally, TPC-C specifies restrictions on the maximum throughput achievable per warehouse. This is done to ensure that as a system becomes progressively more capable of throughput, it must also deal with progressively more data. This is how things work in the real world, and it makes little sense to say that your database can process a bazillion transactions per second if it’s processing the same data over and over again.
+
+Because TPC-C is constrained to a maximum amount of throughput per warehouse, we often discuss TPC-C performance as the maximum number of warehouses for which a database can maintain the maximum throughput. For a full description of the benchmark, please consult the official documentation.
+
 ### TPC-C 50K
 <img src="{{ 'images/v19.2/tpcc50k.png' | relative_url }}" alt="TPC-C 50,000" style="max-width:100%" />
 
-TPC-C is the best benchmark for OLTP workloads. The above chart demonstrates the CockroachDB processes 50X the throughput of Amazon Aurora when running TPC-C. To learn more about why we believe TPC-C is the best benchmark [click here](https://www.cockroachlabs.com/blog/cockroachdb-2dot1-performance/).
+~~~
+   | CockroachDB | Amazon Aurora |
++-----------+---------+----------+
+  Max Throughput      | 631851 tpmC    |      12582 tpmC |
+  Max Warehouses with Max Efficiency      | 50000 Warehouses    |       1000 Warehouses |
+  Max Number of Rows      | 24.9B    |       0.499B |
+  Max Unreplicated Data      | 4TB   |      0.08TB |
+  Machine type      | c5d.4xlarge   |      r3.8xl |
+~~~   
+
+CockroachDB can hit an incredible 631K tpmC with 50,000 warehouses! We achieved these results at 98% of the max possible efficiency for TPC-C 50k.
+
+We compared our unofficial TPC-C results to Amazon Aurora RDS unofficial TPC-C results from AWS re:Invent 2017. We also used Aurora’s SIGMOD 2017 paper for additional information as to their test setup and load generator.
+
+As such, based upon their last published metrics, CockroachDB is now 50 times more scalable than Amazon Aurora, supporting 25 billion rows and more than 4 terabytes of frequently accessed data.
+
+Unlike Amazon Aurora, CockroachDB achieves this performance in serializable mode, the strongest isolation mode in the SQL standard. Like many other databases, Aurora selectively degrades isolation levels for performance, leaving workloads susceptible to fraud and data loss.
+
+To learn more about the comparison with Amazon Aurora [click here](https://www.cockroachlabs.com/blog/cockroachdb-2dot1-performance/).
+
+To try this out for yourself on your laptop [visit this docs page](https://www.cockroachlabs.com/docs/v19.1/training/performance-benchmarking.html#main-content)or to reproduce TPC-C 50,000 [visit this page](https://www.cockroachlabs.com/guides/cockroachdb-performance/).
 
 ### Linear Scale
-<img src="{{ 'images/v19.2/linearscale.png' | relative_url }}" alt="CRDB Linear Scale" style="max-width:100%" />
-
 CockroachDB has no theoretical limit to scaling throughput or number of nodes. Practically, we can provide near linear performance up to 250 nodes.
+
+Another way to measure scale is to compare what happens to throughput and latency as we increase the number of nodes. We ran a simple benchmark named Sysbench (95% point reads, 5% point writes, all uniformly distributed) on an increasing number of nodes to demonstrate that adding nodes increases throughput linearly while holding p50 and p99 latency constant.
+
+<img src="{{ 'images/v19.2/linearscale.png' | relative_url }}" alt="CRDB Linear Scale" style="max-width:100%" />
 
 This chart shows linear performance for CRDB as we scale out the number of nodes when running Sysbench. We chose Sysbench for this chart because it is easier to see the relationship between the number throughput and number of nodes. We used AWS C5D.4xlarge nodes to run these numbers. CockroachDB can scale both horizontally, number of nodes, and vertically, size of CPU per node. We prefer benchmarks like TPC-C because they offer the complex reads and writes that we think reflect our customers OLTP workloads.
 
