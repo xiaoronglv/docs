@@ -6,7 +6,7 @@ toc: true
 This page provides an overview of CockroachDB's benchmark performance on industry standard benchmarks like TPC-C and Sysbench.
 
 {{site.data.alerts.callout_success}}
-If you are looking for specific information optimizing SQL performance see this overview [SQL Performance Best Practices](performance-best-practices-overview.md) or see [Performance Tuning](performance-tuning.html). For guidance on deployment and data location techniques to minimize network latency, see [Topology Patterns](topology-patterns.html).
+If you are looking for specific information on optimizing SQL performance see this overview [SQL Performance Best Practices](performance-best-practices-overview.md) or see [Performance Tuning](performance-tuning.html). For guidance on deployment and data location techniques to minimize network latency, see [Topology Patterns](topology-patterns.html).
 {{site.data.alerts.end}}
 
 CockroachDB provides predictable scale, throughput, latency, and concurrency at all cluster sizes.
@@ -20,7 +20,7 @@ Cockroach Labs measures performance through many diverse tests, including the in
 
 TPC-C is old, but it has withstood the test of time. Despite being created in 1992, it’s still the most mature and relevant industry standard measure for OLTP workloads. In its own words, TPC-C:
 
-      “…involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.”
+>“…involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.”
 
 As a result, TPC-C includes create, read, update, and delete (e.g., CRUD) queries, basic joins, and other SQL statements used to administer mission-critical transactional workloads. It includes detailed specifications for concurrency and workload contention. TPC-C is the only objective comparison for evaluating OLTP performance.
 
@@ -35,7 +35,7 @@ Because TPC-C is constrained to a maximum amount of throughput per warehouse, we
 ### TPC-C 50K
 <img src="{{ 'images/v19.2/tpcc50k.png' | relative_url }}" alt="TPC-C 50,000" style="max-width:100%" />
 
-~~~
+
    | CockroachDB | Amazon Aurora |
 +-----------+---------+----------+
   Max Throughput      | 631851 tpmC    |      12582 tpmC |
@@ -43,7 +43,7 @@ Because TPC-C is constrained to a maximum amount of throughput per warehouse, we
   Max Number of Rows      | 24.9B    |       0.499B |
   Max Unreplicated Data      | 4TB   |      0.08TB |
   Machine type      | c5d.4xlarge   |      r3.8xl |
-~~~   
+
 
 CockroachDB can hit an incredible 631K tpmC with 50,000 warehouses! We achieved these results at 98% of the max possible efficiency for TPC-C 50k.
 
