@@ -66,30 +66,34 @@ Another way to measure scale is to compare what happens to throughput and latenc
 
 This chart shows linear performance for CRDB as we scale out the number of nodes when running Sysbench. We chose Sysbench for this chart because it is easier to see the relationship between the number throughput and number of nodes. We used AWS C5D.4xlarge nodes to run these numbers. CockroachDB can scale both horizontally, number of nodes, and vertically, size of CPU per node. We prefer benchmarks like TPC-C because they offer the complex reads and writes that we think reflect our customers OLTP workloads.
 
-## Throughput
+##Sysbench
+Sysbench is a popular tool that allows for basic throughput and latency testing. We prefer the more complex TPC-C, as discussed above, but believe Sysbench is a reasonable alternative for understanding basic throughput and latency across different databases. We will provide forthcoming instructions for how to benchmark using Sysbench. In the meantime, know that the numbers below were generated from a three-node cluster of AWS c5d.9xlarge VMs run across AWS’s us-east-1 region (availability zones a, b, and c) against Sysbench’s oltp_insert and oltp_point_select workloads.
+
+###Throughput
 
 We measure throughput as transactions per unit of time.
 
-In the real world, applications generate transactional workloads which consist of a combination of reads and writes, possibly with concurrency and likely without all data being loaded into memory. If you see benchmark results quoted in QPS, take them with a grain of salt, because anything as simple as a “query” is unlikely to be representative of the workload you need to run in practice.
+In the real world, applications generate transactional workloads which consist of a combination of reads and writes, possibly with concurrency and likely without all data being loaded into memory. If you see benchmark results quoted in QPS, take them with a grain of salt, because anything as simple as a “query” is unlikely to be representative of the workload you need to run in practice. For Sysbench, we can achieve 118,000 inserts per second on the oltp_insert workload and 336,000 reads per second on the oltp_point_select workload.
+
 
 <img src="{{ 'images/v19.2/sysbench-throughput.png' | relative_url }}" alt="Sysbench Throughput" style="max-width:100%" />
 
-## Latency
+### Latency
 Latency, measured in milliseconds (ms), is usually distinguished as either read or write latencies depending upon the transaction.
 
-It’s important to note that it is not sufficient to evaluate median latency. We must also understand the distribution, including tail performance, because these latencies occur frequently in production applications. This means that we must look critically at 95th percentile (p95) and 99th percentile (p99) latencies.
+It’s important to note that it is not sufficient to evaluate median latency. We must also understand the distribution, including tail performance, because these latencies occur frequently in production applications. This means that we must look critically at 95th percentile (p95) and 99th percentile (p99) latencies. For Sysbench, latency is reported only in average number of ms. We achieve an average of 4.3 ms in the oltp_insert workload and 0.7 ms in the oltp_point_select workload.
 
 <img src="{{ 'images/v19.2/sysbench-latency.png' | relative_url }}" alt="Sysbench Latency" style="max-width:100%" />
 
-###1 ms reads
+####1 ms reads
 CockroachDB returns single-row reads in 1 ms or less on average. We provide a number of important optimizations for both single-region and multi-region read performance including Secondary Indexes and Follower Reads.
 
-###2 ms writes
+####2 ms writes
 CockroachDB processes single-row writes in 2 ms or less, and supports a variety of SQL and operational tuning practices for optimizing query performance.
 
 <img src="{{ 'images/v19.2/1ms2ms.png' | relative_url }}" alt="1 ms reads, 2 ms writes" style="max-width:100%" />
 
-## Concurrency
+### Concurrency
 
 CockroachDB achieves excellent performance even under a large number of concurrent workers from a large number of clients.
 
