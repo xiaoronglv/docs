@@ -3,28 +3,25 @@ title: CockroachDB Performance Benchmarking
 summary: TBD
 toc: true
 ---
-This page provides an overview of CockroachDB's benchmark performance on industry-standard benchmarks like TPC-C and Sysbench.
+This page provides an overview of CockroachDB's performance on industry-standard benchmarks like TPC-C and Sysbench.
 
 {{site.data.alerts.callout_success}}
 If you are looking for specific information on optimizing SQL performance see this overview  on [SQL Performance Best Practices](performance-best-practices-overview.md) or see this [Performance Tuning Guide](performance-tuning.html). For guidance on deployment and data location techniques to minimize network latency, see [Topology Patterns](topology-patterns.html).
 {{site.data.alerts.end}}
 
-CockroachDB provides predictable scale, throughput, latency, and concurrency at all cluster sizes.
+We’ve tested CockroachDB extensively in public and private clouds and observed predictable scale, throughput, latency, and concurrency at all cluster sizes.
 
-We’ve tested CockroachDB extensively in public and private clouds observing consistent throughput.
-
-**If you fail to achieve the performance profile listed below please contact us directly. More than likely there is a problem in either the hardware, workload, or test design. We stand by these profile characteristics and provide reproduction steps for all published benchmarks.**
+**If you fail to achieve the performance profiles listed below, there is likely a problem in either the hardware, workload, or test design. We stand by these profile characteristics and provide reproduction steps for all published benchmarks.**
 
 ## Scale
-
 ###TPC-C
-Cockroach Labs measures performance through many diverse tests, including the industry-standard OLTP benchmark TPC-C, which simulates an e-commerce or retail company.
+Cockroach Labs measures performance through many diverse tests, including the [industry-standard OLTP benchmark TPC-C](http://www.tpc.org/tpcc/), which simulates an e-commerce or retail company.
 
 TPC-C is old, but it has withstood the test of time. Despite being created in 1992, it’s still the most mature and relevant industry standard measure for OLTP workloads. In its own words, TPC-C:
 
 >“…involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.”
 
-As a result, TPC-C includes create, read, update, and delete (e.g., CRUD) queries, basic joins, and other SQL statements used to administer mission-critical transactional workloads. It includes detailed specifications for concurrency and workload contention. TPC-C is the only objective comparison for evaluating OLTP performance.
+As a result, TPC-C includes create, read, update, and delete (e.g., CRUD) queries, basic joins, and other SQL statements used to administer mission-critical transactional workloads. It includes detailed specifications for concurrency and workload contention. **TPC-C is the only objective comparison for evaluating OLTP performance.**
 
 TPC-C measures the throughput and latency for processing sales through a customer warehouse using a “business throughput” metric called **tpmC** that measures the number of order transactions performed per minute throughout the system.
 
@@ -32,7 +29,7 @@ In fact, tpmC is a considerably more realistic metric than TPS or QPS alone beca
 
 Finally, TPC-C specifies restrictions on the maximum throughput achievable per warehouse. This is done to ensure that as a system becomes progressively more capable of throughput, it must also deal with progressively more data. This is how things work in the real world, and it makes little sense to say that your database can process a bazillion transactions per second if it’s processing the same data over and over again.
 
-Because TPC-C is constrained to a maximum amount of throughput per warehouse, we often discuss TPC-C performance as the maximum number of warehouses for which a database can maintain the maximum throughput. For a full description of the benchmark, please consult the official documentation.
+Because TPC-C is constrained to a maximum amount of throughput per warehouse, we often discuss TPC-C performance as the **maximum number of warehouses for which a database can maintain the maximum throughput.** For a full description of the benchmark, please consult the [official documentation](http://www.tpc.org/tpc_documents_current_versions/current_specifications.asp).
 
 ### TPC-C 50K
 <img src="{{ 'images/v19.2/tpcc50k.png' | relative_url }}" alt="TPC-C 50,000" style="max-width:100%" />
@@ -53,7 +50,7 @@ We compared our unofficial TPC-C results to Amazon Aurora RDS unofficial TPC-C r
 
 As such, based upon their last published metrics, CockroachDB is now 50 times more scalable than Amazon Aurora, supporting 25 billion rows and more than 4 terabytes of frequently accessed data.
 
-Unlike Amazon Aurora, CockroachDB achieves this performance in serializable mode, the strongest isolation mode in the SQL standard. Like many other databases, Aurora selectively degrades isolation levels for performance, leaving workloads susceptible to fraud and data loss.
+Unlike Amazon Aurora, CockroachDB achieves this performance in `SERIALIZABLE` isolation, the strongest isolation mode in the SQL standard. Like many other databases, Aurora selectively degrades isolation levels for performance, leaving workloads susceptible to fraud and data loss.
 
 To learn more about the comparison with Amazon Aurora [click here](https://www.cockroachlabs.com/blog/cockroachdb-2dot1-performance/).
 
@@ -72,7 +69,6 @@ This chart shows linear performance for CRDB as we scale out the number of nodes
 Sysbench is a popular tool that allows for basic throughput and latency testing. We prefer the more complex TPC-C, as discussed above, but believe Sysbench is a reasonable alternative for understanding basic throughput and latency across different databases. We will provide forthcoming instructions for how to benchmark using Sysbench. In the meantime, know that the numbers below were generated from a three-node cluster of AWS c5d.9xlarge VMs run across AWS’s us-east-1 region (availability zones a, b, and c) against Sysbench’s oltp_insert and oltp_point_select workloads.
 
 ###Throughput
-
 We measure throughput as transactions per unit of time.
 
 In the real world, applications generate transactional workloads which consist of a combination of reads and writes, possibly with concurrency and likely without all data being loaded into memory. If you see benchmark results quoted in QPS, take them with a grain of salt, because anything as simple as a “query” is unlikely to be representative of the workload you need to run in practice. For Sysbench, we can achieve 118,000 inserts per second on the oltp_insert workload and 336,000 reads per second on the oltp_point_select workload.
@@ -94,23 +90,19 @@ CockroachDB returns single-row **reads in 1 ms or less**. We provide a number of
 CockroachDB processes single-row **writes in 2 ms or less**, and supports a variety of SQL and operational tuning practices for optimizing query performance.
 
 ### Concurrency
-
 CockroachDB achieves excellent performance even under a large number of concurrent workers from a large number of clients.
 
 <img src="{{ 'images/v19.2/concurrency.png' | relative_url }}" alt="Concurrency" style="max-width:100%" />
 
 ## Hardware
+CockroachDB works well on commodity hardware. We are cloud-native and built to be cloud-agnostic. You can use CockroachDB with AWS, GCP, Azure, Digital Ocean, Rackspace, or any other provider. You can also use CockroachDB with private on-premise datacenters and we have many customers that even mix public and private clouds! You can find more information on hardware recommendations on our [Hardware page](https://www.cockroachlabs.com/docs/v19.1/recommended-production-settings.html#hardware).
 
-CockroachDB works well on commodity hardware. We are cloud-native and built to be cloud-agnostic. You can use CockroachDB with AWS, GCP, Azure, Digital Ocean, Rackspace, or any other provider. You can also use CockroachDB with private on-premise datacenters and we have many customers that even mix public and private clouds!
-
-CockroachDB creates a yearly cloud report focused on the performance of hardware. In November 2019, we will provide metrics on AWS, GCP, and Azure. In the meantime, you can read the [2018 Cloud Report](https://www.cockroachlabs.com/blog/2018_cloud_report/) that focuses on AWS and GCP.
+CockroachDB creates a yearly cloud report focused on evaluating hardware performance. In November 2019, we will provide metrics on AWS, GCP, and Azure. In the meantime, you can read the [2018 Cloud Report](https://www.cockroachlabs.com/blog/2018_cloud_report/) that focuses on AWS and GCP.
 
 ## Workload Specific Performance
-
 This document is about CockroachDB’s performance on benchmarks. For information about how to tune query performance, design your topology pattern, or otherwise improve performance on your workload, please consult our broader documentation on [SQL Performance Best Practices](performance-best-practices-overview.md), [Performance Tuning](performance-tuning.html), or for guidance on deployment and data location techniques to minimize network latency, see our [Topology Patterns Guide](topology-patterns.html).
 
 ## Known Limitations
-
 CockroachDB has no theoretical limitations to scaling, throughput, latency, or concurrency other than the speed of light. Practically, we will be improving bottlenecks and addressing challenges over the next several releases. In the meantime, we want you to be aware of the following known limitations.
 
 - CockroachDB is not yet suitable for heavy analytics / OLAP.
