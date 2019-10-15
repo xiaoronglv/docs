@@ -54,16 +54,16 @@ Unlike Amazon Aurora, CockroachDB achieves this performance in `SERIALIZABLE` is
 
 To learn more about the comparison with Amazon Aurora [click here](https://www.cockroachlabs.com/blog/cockroachdb-2dot1-performance/).
 
-To try this out for yourself on your laptop [visit this docs page](https://www.cockroachlabs.com/docs/v19.1/training/performance-benchmarking.html#main-content)or to reproduce TPC-C 50,000 [visit this page](https://www.cockroachlabs.com/guides/cockroachdb-performance/).
+To try this out for yourself on your laptop [visit this docs page](https://www.cockroachlabs.com/docs/v19.1/training/performance-benchmarking.html#main-content). Or, if you want to reproduce the full results of TPC-C [visit this page](https://www.cockroachlabs.com/guides/cockroachdb-performance/).
 
 ### Linear Scale
-CockroachDB has **no theoretical limit** to scaling throughput or the number of nodes. Practically, we can provide near-linear performance up to 250 nodes.
+CockroachDB has **no theoretical limit** to scaling throughput or the number of nodes. Practically, we can provide near-linear performance passed more than 256 nodes.
 
-Another way to measure scale is to compare what happens to throughput and latency as we increase the number of nodes. We ran a simple benchmark named Sysbench (95% point reads, 5% point writes, all uniformly distributed) on an increasing number of nodes to demonstrate that adding nodes increases throughput linearly while holding p50 and p99 latency constant.
+Another way to measure scale is to compare what happens to throughput and latency as we increase the number of nodes. We ran a simple benchmark named KV 95 (95% point reads, 5% point writes, all uniformly distributed) on an increasing number of nodes to demonstrate that adding nodes increases throughput linearly while holding p50 and p99 latency constant.
 
 <img src="{{ 'images/v19.2/linearscale.png' | relative_url }}" alt="CRDB Linear Scale" style="max-width:100%" />
 
-This chart shows linear performance for CRDB as we scale out the number of nodes when running Sysbench. We chose Sysbench for this chart because it is easier to see the relationship between the number throughput and the number of nodes. We used AWS C5D.4xlarge nodes to run these numbers. CockroachDB can scale horizontally (e.g., number of nodes) or vertically (e.g., size of CPU per node). We prefer benchmarks like TPC-C because they offer the complex reads and writes that we think reflect our customer's OLTP workloads.
+This chart shows linear performance for CRDB as we scale out the number of nodes when running KV 95. We chose KV 95 for this chart because it is easier to see the relationship between the number throughput and the number of nodes. We used AWS C5D.4xlarge nodes to run these numbers. CockroachDB can scale horizontally (e.g., number of nodes) or vertically (e.g., size of CPU per node). We prefer benchmarks like TPC-C because they offer the complex reads and writes that we think reflect our customer's OLTP workloads.
 
 ##Sysbench
 Sysbench is a popular tool that allows for basic throughput and latency testing. We prefer the more complex TPC-C, as discussed above, but believe Sysbench is a reasonable alternative for understanding basic throughput and latency across different databases. We will provide forthcoming instructions for how to benchmark using Sysbench. In the meantime, know that the numbers below were generated from a three-node cluster of AWS c5d.9xlarge VMs run across AWS’s us-east-1 region (availability zones a, b, and c) against Sysbench’s oltp_insert and oltp_point_select workloads.
@@ -88,11 +88,6 @@ CockroachDB returns single-row **reads in 1 ms or less**. We provide a number of
 
 ####2 ms writes
 CockroachDB processes single-row **writes in 2 ms or less**, and supports a variety of SQL and operational tuning practices for optimizing query performance.
-
-### Concurrency
-CockroachDB achieves excellent performance even under a large number of concurrent workers from a large number of clients.
-
-<img src="{{ 'images/v19.2/concurrency.png' | relative_url }}" alt="Concurrency" style="max-width:100%" />
 
 ## Hardware
 CockroachDB works well on commodity hardware. We are cloud-native and built to be cloud-agnostic. You can use CockroachDB with AWS, GCP, Azure, Digital Ocean, Rackspace, or any other provider. You can also use CockroachDB with private on-premise datacenters and we have many customers that even mix public and private clouds! You can find more information on hardware recommendations on our [Hardware page](https://www.cockroachlabs.com/docs/v19.1/recommended-production-settings.html#hardware).
