@@ -101,6 +101,6 @@ This document is about CockroachDB’s performance on benchmarks. For informatio
 CockroachDB has no theoretical limitations to scaling, throughput, latency, or concurrency other than the speed of light. Practically, we will be improving bottlenecks and addressing challenges over the next several releases. In the meantime, we want you to be aware of the following known limitations.
 
 - CockroachDB is not yet suitable for heavy analytics / OLAP.
-- CockroachDB has not yet been tested beyond 512 nodes
+- CockroachDB has not yet been tested beyond 256 nodes, however, we know of no known limitations to horizontal scaling 
 - While CockroachDB supports SERIAL and sequential keys they can create hotspots within CockroachDB. We recommend using UUIDs or other methods to avoid writing to sequential keys
 - CockroachDB is optimized for good performance with rotational disk drives when using the durable memory storage engine. It is not recommended that you run with rotational HDDs when using the ssd storage engine.
