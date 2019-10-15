@@ -90,7 +90,7 @@ CockroachDB returns single-row **reads in 1 ms or less**. We provide a number of
 CockroachDB processes single-row **writes in 2 ms or less**, and supports a variety of SQL and operational tuning practices for optimizing query performance.
 
 ## Hardware
-CockroachDB works well on commodity hardware. We are cloud-native and built to be cloud-agnostic. You can use CockroachDB with AWS, GCP, Azure, Digital Ocean, Rackspace, or any other provider. You can also use CockroachDB with private on-premise datacenters and we have many customers that even mix public and private clouds! You can find more information on hardware recommendations on our [Hardware page](https://www.cockroachlabs.com/docs/v19.1/recommended-production-settings.html#hardware).
+CockroachDB works well on commodity hardware. We are cloud-native and built to be cloud-agnostic. You can use CockroachDB with Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, Digital Ocean, Rackspace, or any other provider. You can also use CockroachDB with private on-premise datacenters and we have many customers that even mix public and private clouds! You can find more information on hardware recommendations on our [Hardware page](https://www.cockroachlabs.com/docs/v19.1/recommended-production-settings.html#hardware).
 
 CockroachDB creates a yearly cloud report focused on evaluating hardware performance. In November 2019, we will provide metrics on AWS, GCP, and Azure. In the meantime, you can read the [2018 Cloud Report](https://www.cockroachlabs.com/blog/2018_cloud_report/) that focuses on AWS and GCP.
 
